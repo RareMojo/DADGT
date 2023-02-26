@@ -3,6 +3,8 @@ For the video game Dark and Darker, this locates which map the player is on.
 
 It then overlays the players minimap onto an image of the map the player is on in real time.
 
+Click this thumbnail to see a demonstration
+
 [![Alt text for your video](https://img.youtube.com/vi/tINZ1yZQa7I/0.jpg)](https://www.youtube.com/watch?v=tINZ1yZQa7I)
 
 
