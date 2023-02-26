@@ -9,8 +9,18 @@ It then overlays the players minimap onto an image of the map the player is on i
 
 Instructions:
 
-1. Download ZIP file and extract to a good location
-2. Run start.bat
-3. Input monitor that the game is on (0, 1, or 2)
-4. Input how many milliseconds per map refresh (1000 is good enough, 500 is great)
-5. Profit ?!?!?!11
+To install requirements:
+1. Install Python 3.10.9, download it [here](https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe)
+2. Download ZIP file and extract to a good location
+3. Open a command prompt or terminal window
+5. Navigate to the directory where requirements.txt is located "path\to\file\DnDLocation\requirements.txt using cd command
+6. Enter 'pip install -r requirements.txt' into the terminal
+7. Wait for the installation to complete. Once it is completed you can run the program.
+
+
+To run the program:
+
+1. Run start.bat
+2. Input monitor that the game is on (0, 1, or 2)
+3. Input how many milliseconds per map refresh (1000 is good enough, 500 is great)
+4. Profit ?!?!?!11
