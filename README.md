@@ -11,7 +11,7 @@ Instructions:
 
 To install requirements:
 1. Install Python 3.10.9, download it [here](https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe)
-2. Download ZIP file and extract to a good location
+2. Download [ZIP file](https://github.com/RareMojo/DaDMinimapLocator/archive/refs/heads/master.zip) and extract to a good location
 3. Open a command prompt or terminal window
 5. Navigate to the directory where requirements.txt is located "path\to\file\DnDLocation\requirements.txt using cd command
 6. Enter 'pip install -r requirements.txt' into the terminal
