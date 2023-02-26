@@ -6,6 +6,7 @@ It then overlays the players minimap onto an image of the map the player is on i
 [![Alt text for your video](https://img.youtube.com/vi/tINZ1yZQa7I/0.jpg)](https://www.youtube.com/watch?v=tINZ1yZQa7I)
 
 
+
 Instructions:
 
 1. Download ZIP file and extract to a good location
