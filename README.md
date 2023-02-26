@@ -20,7 +20,7 @@ It then overlays the players minimap onto an image of the map the player is on i
 
 **To run the program:**
 
-1. Run start.bat
+1. Run start.bat, a terminal will open waiting for inputs
 2. Input monitor that the game is on (0, 1, or 2)
 3. Input how many milliseconds per map refresh (1000 is good enough, 500 is great)
 4. Profit ?!?!?!11
