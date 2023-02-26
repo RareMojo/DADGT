@@ -7,9 +7,9 @@ It then overlays the players minimap onto an image of the map the player is on i
 
 
 
-Instructions:
+**Instructions:**
 
-To install requirements:
+**To install requirements:**
 1. Install Python 3.10.9, download it [here](https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe)
 2. Download [ZIP file](https://github.com/RareMojo/DaDMinimapLocator/archive/refs/heads/master.zip) and extract to a good location
 3. Open a command prompt or terminal window
@@ -18,7 +18,7 @@ To install requirements:
 7. Wait for the installation to complete. Once it is completed you can run the program.
 
 
-To run the program:
+**To run the program:**
 
 1. Run start.bat
 2. Input monitor that the game is on (0, 1, or 2)
