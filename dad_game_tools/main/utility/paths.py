@@ -3,6 +3,12 @@ import os
 path = os.path.dirname(os.path.abspath(__file__))
 
 
+# LOGS PATHS
+#------------------------------------------------------------
+log_path = os.path.join(path, '..', 'utility', 'logs', 'log.txt')
+latest_log_path = os.path.join(path, '..', 'utility', 'logs', 'latest_log.txt')
+
+
 # ASSETS PATHS
 #------------------------------------------------------------
 
@@ -16,10 +22,15 @@ compass_path = os.path.join(path, '..', 'assets', 'captures', 'compass.png')
 killfeed_path = os.path.join(path, '..', 'assets', 'captures', 'killfeed.png')
 match_time_path = os.path.join(path, '..', 'assets', 'captures', 'match_time.png')
 minimap_path = os.path.join(path, '..', 'assets', 'captures', 'minimap.png')
+# Final image
+current_map_path = os.path.join(path, '..', 'assets', 'captures', 'current_map.png')
 
 
 # INTERFACE
-outline = os.path.join(path, '..', 'assets', 'interface', 'outline.png')
+outline_image_path = os.path.join(path, '..', 'assets', 'interface', 'outline.png')
+standby_image_path = os.path.join(path, '..', 'assets', 'interface', 'standby.png')
+icon_png_path = os.path.join(path, '..', 'assets', 'interface', 'dadgt_icon.png')
+icon_ico_path = os.path.join(path, '..', 'assets', 'interface', 'dadgt_icon.ico')
 
 
 # MAPS
@@ -54,7 +65,7 @@ map_edges_path = os.path.join(path, '..', 'assets', 'maps', 'edges', 'map_edges.
 # Controlled images for testing without capture method
 test_minimap_path = os.path.join(path, '..', 'assets', 'test_images', 'test_minimap.png')
 test_minimap2_path = os.path.join(path, '..', 'assets', 'test_images', 'test_minimap2.png')
-test = os.path.join(path, '..', 'assets', 'test_images', 'test.jpg')
+test_images_path = os.path.join(path, '..', 'assets', 'test_images')
 
 #------------------------------------------------------------
 # END OF ASSETS PATHS
