@@ -5,6 +5,6 @@ This is a project that scrapes the players screen for player information such as
 This will be outputted to the user in a user friendly way. Click on the thumbnail below to see a demonstration of its current state.
 
 
-[![Alt text for your video](https://img.youtube.com/vi/vkWrTSGCtrE/0.jpg)](https://www.youtube.com/watch?v=vkWrTSGCtrE)
-
-
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=n7sNrlNYBfM" target="_blank">
+ <img src="http://img.youtube.com/vi/n7sNrlNYBfM/mqdefault.jpg" alt="Watch the video" width="480" height="250" border="10" />
+</a>
