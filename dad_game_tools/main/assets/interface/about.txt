@@ -1,0 +1,13 @@
+        
+            
+            
+            Thank you for downloading DADGT!
+
+            This program is for gathering local
+            player information for tracking stats,
+            progress, location, and more some day!
+
+            It uses mainly OpenCV to achieve data
+            collection without the use of an API.
+
+            Please let us know what you think!

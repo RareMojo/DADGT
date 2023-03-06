@@ -1,0 +1,7 @@
+{
+    "monitorNumber": 1,
+    "timerInterval": 0.1,
+    "playerName": "Player",
+    "lobbyCode": "1234",
+    "serverName": "localhost"
+}

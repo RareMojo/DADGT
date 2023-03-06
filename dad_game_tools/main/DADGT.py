@@ -5,15 +5,13 @@ import time
 import cv2
 import mss
 import numpy as np
-import utility.debug as debug
-import utility.paths as paths
+from utility.debug import DadgtDebug
 from controller.empty_controller import EmptyController
-from settings import Settings
-from utility.imageprocessing import (crop_compass, crop_health_bar,
-                                     crop_killfeed, crop_match_time,
-                                     crop_minimap, find_minimap_location,
-                                     grab_edges, take_screenshot)
+from utility.settings import DadgtPaths as paths
+from utility.settings import Settings
+from utility.imageprocessing import find_minimap_location, grab_ui, grab_edges
 
+DEBUG_MODE = True
 
 class Dadgt:
     def __init__(self, controller, settings):
@@ -22,7 +20,6 @@ class Dadgt:
         self.log_path = paths.log_path
         self.log_file = open(self.log_path, "a")
         self.clear_log()
-        self.log_msg("DADGT-App initialized!")
         self.event_end = threading.Event() # Closing event, ends thread
         self.executor = ""
         self.callback = None
@@ -33,43 +30,52 @@ class Dadgt:
         # self.socket.lobby = self.lobbyCode
         #  if self.socket.lobby:
         #      self.socket.start("http://bmbros.sytes.net:5001/lobby")
-        self.log_msg("DADGT initialized!")
-
+        self.setup_messages(settings)
+       
+    @DadgtDebug.timer(unit="ms", message="start() function")
     def start(self):
         """
         Starts DADGT, usually called from controller through DADGT-App.
         """
+        global DEBUG_MODE
+        if DEBUG_MODE:
+            DEBUG_MODE = True
+            print("Starting DADGT with debug mode on...")
         self.event_end.clear()
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
         self.clear_log()
-        self.log_msg("Dadgt started!")
+        self.log_msg("DADGT started!")
         self.get_settings()
         self.main()
+            
 
+    @DadgtDebug.timer(unit="ms", message="stop() function")
     def stop(self):
         """
         Stops DADGT, usually called from controller through DADGT-App.
         """
         if self.executor != "":
-            self.log_msg("Dadgt stopped!")
+            self.log_msg("DADGT stopped!")
             self.executor.shutdown(wait=False, cancel_futures=True)
             self.executor = ""
         self.log_file.close()
         self.event_end.set()
         self.window_name = self.window_name + " "
-    
+
+
     def log_msg(self, msg: str, overwrite=False):
         """
         Used to log messages from DADGT to the log file, and to the gui.
         """
         # Create the log message with a timestamp
-        log_msg = f"{debug.current_time()}: {msg}"
+        log_msg = f"{DadgtDebug.current_time()}: {msg}"
         # Write the log message to the log file
         with open(self.log_path, "a") as f:
             f.write(log_msg + "\n")
         # Call the update_log method of the gui instance
         self.controller.update_log()
 
+    @DadgtDebug.timer(unit="ms", message="clear_log() function")
     def clear_log(self):
         """
         Clears the log file
@@ -79,6 +85,7 @@ class Dadgt:
         self.log_file.close()
         self.log_file = open(self.log_path, "a")
 
+    @DadgtDebug.timer(unit="ms", message="get_settings() function")
     def get_settings(self):
         """
         Get settings from the settings class.
@@ -89,8 +96,48 @@ class Dadgt:
         self.serverName = self.settings.get_server_name()
         self.monitorNumber = self.settings.get_monitor_number()
         self.timerInterval = self.settings.get_timer_interval()
-        self.log_msg(f"Settings updated: {self.playerName}, {self.lobbyCode}, {self.serverName}, {self.monitorNumber}, {self.timerInterval}")
+        settings = [" ",
+            "[USER SETTINGS]",
+            f"Monitor number: {self.monitorNumber}",
+            f"Refresh rate: {self.timerInterval}",
+            "[USER OPTIONS]",
+            f"Player name: {self.playerName}",
+            f"Lobbycode: {self.lobbyCode}",
+            f"Server: {self.serverName}",
+            "-" * 20
+        ]
+        self.log_msg("\n".join(settings))
 
+    def setup_messages(self, settings):
+        """
+        Setup messages to be displayed at the start of DADGT.
+        """
+        messages = [" ",
+            "Welcome to DADGT!",
+            "-" * 20,
+            "[DEFAULT SETTINGS]",
+            f"Monitor number: {settings.monitorNumber}",
+            f"Refresh rate: {settings.timerInterval}",
+            "[DEFAULT OPTIONS]",
+            f"Player name: {settings.playerName}",
+            f"Lobbycode: {settings.lobbyCode}",
+            f"Server: {settings.serverName}",
+
+            "[SETUP WIZARD]",
+            "Settings are in the file menu, options fields are below.",
+            "Set the monitor number to where the game is running.",
+            "Set the refresh rate to desired map display rate.",
+            "Set the player name to the name of your player.",
+            "Set the lobby code to the lobby you want to join",
+            "Set the server name to the server you want to connect to.",
+            "Press start to start DADGT when ready.",
+            "-" * 20,
+        ]
+        self.log_msg("\n".join(messages))
+
+
+    # Main looping function of DADGT
+    #@DadgtDebug.timer(unit="ms", message="main() function")
     def main(self):
         """
         Main function of the DADGT, this is where the magic happens.
@@ -100,6 +147,7 @@ class Dadgt:
         """
         # Define the monitor to capture
         monitor_number = self.monitorNumber
+        #DadgtDebug.debug_args(monitor_number) # debug
         monitors = mss.mss().monitors
         if monitor_number < len(monitors):
             monitor = {"top": monitors[monitor_number]["top"], "left": monitors[monitor_number]["left"], "width": monitors[monitor_number]["width"], "height": monitors[monitor_number]["height"]}
@@ -108,6 +156,7 @@ class Dadgt:
             exit()
         # Define the timer interval used for refresh rate
         if self.timerInterval < 0:
+            #DadgtDebug.debug_args(self.timerInterval) # debug
             self.log_msg("Invalid timer interval!")
             exit()
 
@@ -118,20 +167,13 @@ class Dadgt:
             try:
                 # Capture the monitor and return the screenshot as a numpy array
                 self.log_msg(f'Taking screenshot for monitor {monitor_number}...')
-                screenshot = take_screenshot(monitor)
+                minimap = grab_ui(monitor)
+                #DadgtDebug.save_image(minimap, paths.minimap_path) # save minimap for debugging
+                #DadgtDebug.debug_args(minimap, paths.minimap_path) # save minimap for debugging
                 self.log_msg('Screenshot taken.')
             except Exception as e:
                 self.log_msg("Screenshot error!")
                 self.log_msg(e)
-
-            # Crop out the content from the screenshot, coords are based on 1440p monitor
-            self.log_msg('Cropping screenshot...')
-            minimap = crop_minimap(screenshot)
-            health_bar = crop_health_bar(screenshot) # unused, but working
-            compass = crop_compass(screenshot) # unused, but working
-            killfeed = crop_killfeed(screenshot) # unused, but working
-            match_time = crop_match_time(screenshot) # unused, but working
-            self.log_msg('Screenshot cropped.')
 
             # Save screenshot croppings to set filepaths
             self.log_msg('Saving and setting filepaths...')
@@ -146,12 +188,25 @@ class Dadgt:
             self.log_msg('Processing minimap...')
             minimap_edges = grab_edges(minimap)
             cv2.imwrite(paths.minimap_edges_path, minimap_edges)
+            #DadgtDebug.debug_args(minimap_edges=minimap_edges) # debug
             self.log_msg('Minimap processed.')
             
+            # Debug show all captured images
+            # if DEBUG_MODE:
+            #     cv2.destroyAllWindows() # close any existing OpenCV windows
+            #     cv2.imshow("Minimap", minimap)
+            #     cv2.imshow("Health Bar", health_bar)
+            #     cv2.imshow("Compass", compass)
+            #     cv2.imshow("Killfeed", killfeed)
+            #     cv2.imshow("Match Time", match_time)
+            #     cv2.imshow("Minimap Edges", minimap_edges)
+            #     cv2.waitKey(0)
+
             # Find the location of the minimap in the map image reference image
             if successCount > 2:
                 self.log_msg(f'Player found!')
                 result = cv2.matchTemplate(map_edges, minimap_edges, cv2.TM_CCOEFF_NORMED)
+                #DadgtDebug.debug_args(map_edges=map_edges, minimap_edges=minimap_edges) # debug
                 if result.max() < 0.45:
                     self.log_msg(f'Trying to find player location...')
                     successCount = 0
@@ -159,10 +214,11 @@ class Dadgt:
 
                 self.log_msg('Showing map...')    
                 self.current_map = self.__show_map_location(minimap, map_image, result)
+                #DadgtDebug.debug_args(current_map=self.current_map) # debug
                 time.sleep(self.timerInterval)
 
                 if self.executor != "":
-                    self.executor.submit(process, self)
+                    self.executor.submit(dadgt_process, self)
                     self.log_msg('Map shown.')
 
             else:
@@ -179,6 +235,7 @@ class Dadgt:
                     else:
                         # Find the location of the minimap in the map image
                         result = cv2.matchTemplate(map_edges, minimap_edges, cv2.TM_CCOEFF_NORMED)
+                       #DadgtDebug.debug_args(map_edges=map_edges, minimap_edges=minimap_edges) # debug
 
                         # Check for errors
                         if result is None:
@@ -188,9 +245,10 @@ class Dadgt:
                             continue
 
                         self.current_map = self.__show_map_location(minimap, map_image, result)
+                        # DadgtDebug.debug_args(current_map=self.current_map) # debug
 
                         if self.executor != "":
-                            self.executor.submit(process, self)
+                            self.executor.submit(dadgt_process, self)
                             self.log_msg('Map shown.')
 
                         successCount += 1
@@ -203,6 +261,7 @@ class Dadgt:
                 match_found = False
                 time.sleep(self.timerInterval)
 
+    #@DadgtDebug.timer(unit="ms", message="show_map_location() function")
     def __show_map_location(self, minimap: np, map_image: np, result: np):
         """
         Used to show the player's location on the map, produces the final image to display.
@@ -234,7 +293,8 @@ class Dadgt:
         cv2.addWeighted(minimap_final, alpha, map_image, 1 - alpha, 0, map_image)
         return map_image
 
-def process(self):
+@DadgtDebug.timer(unit="ms", message="process() function")
+def dadgt_process(self):
     """
     Seperate process to show the map itself, supoposed to be for testing purposes.
     """
