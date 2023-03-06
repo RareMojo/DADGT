@@ -11,7 +11,7 @@ from utility.settings import DadgtPaths as paths
 from utility.settings import Settings
 from utility.imageprocessing import find_minimap_location, grab_ui, grab_edges
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 class Dadgt:
     def __init__(self, controller, settings):
